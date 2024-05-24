@@ -8,10 +8,10 @@ namespace Dot_Net_EF_MySqlDb.API.Repository
 
         Task<Region> GetRegionById(string Id);
 
-        string Createregion(Region region);
+        Task<string> Createregion(Region region);
 
-        string Updateregion(Region region);
+        Task<string> Updateregion(string Id, Region region);
 
-        string Deleteregion(string Id);
+        Task<string> Deleteregion(string Id);
     }
 }

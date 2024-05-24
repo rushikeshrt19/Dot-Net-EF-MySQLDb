@@ -1,5 +1,6 @@
 ﻿using Dot_Net_EF_MySqlDb.API.Models;
 using Dot_Net_EF_MySqlDb.API.Models.Domain;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dot_Net_EF_MySqlDb.API.Repository
@@ -13,14 +14,39 @@ namespace Dot_Net_EF_MySqlDb.API.Repository
             _applicationDbontext = applicationDbontext;
         }
 
-        public string Createregion(Region region)
+        public async Task<string> Createregion(Region region)
         {
-            throw new NotImplementedException();
+            Guid guid = Guid.NewGuid();
+            region.Id=guid.ToString();
+            await _applicationDbontext.Region.AddAsync(region);
+            var code = await _applicationDbontext.SaveChangesAsync();
+
+            if (code == 1)
+            {
+                return "New Region Added Successfully!!";
+            }
+            else
+            {
+                return "Please Check Data!!";
+            }
         }
 
-        public string Deleteregion(string Id)
+        public async Task<string> Deleteregion(string Id)
         {
-            throw new NotImplementedException();
+            Region? foundRegion= await _applicationDbontext.Region.FirstOrDefaultAsync(x => x.Id==Id);
+
+            if (foundRegion != null) 
+            { 
+                _applicationDbontext.Region.Remove(foundRegion);
+                
+                await _applicationDbontext.SaveChangesAsync();
+
+                return "Region Deleted Successfully!!";
+            }
+            else
+            {
+                return "Region Not Found!!";
+            }
         }
 
         public async Task<List<Region>> GetAllRegionAsync()
@@ -28,14 +54,36 @@ namespace Dot_Net_EF_MySqlDb.API.Repository
             return await _applicationDbontext.Region.ToListAsync();
         }
 
-        public Task<Region> GetRegionById(string Id)
+        public async Task<Region> GetRegionById(string Id)
         {
-            throw new NotImplementedException();
+            return _applicationDbontext.Region.FirstOrDefault(x => x.Id == Id);
         }
 
-        public string Updateregion(Region region)
+        public async Task<string> Updateregion(string Id,Region region)
         {
-            throw new NotImplementedException();
+            Region? foundRegion= await _applicationDbontext.Region.FirstOrDefaultAsync(x => x.Id == Id);
+
+            if(foundRegion == null)
+            {
+                return "Region Not Found!!";
+            }
+            else
+            {
+                foundRegion.Name = region.Name;
+                foundRegion.RegionImageUrl = region.RegionImageUrl;
+                foundRegion.Code = region.Code;
+
+                int code= await _applicationDbontext.SaveChangesAsync();
+
+                if(code == 1)
+                {
+                    return "Region Updated Successfully!!";
+                }
+                else 
+                {
+                    return "Region Not Updated";                
+                }
+            }
         }
     }
 }
