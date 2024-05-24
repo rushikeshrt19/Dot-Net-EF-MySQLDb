@@ -1,5 +1,6 @@
 using Dot_Net_EF_MySqlDb.API.Controllers;
 using Dot_Net_EF_MySqlDb.API.Models;
+using Dot_Net_EF_MySqlDb.API.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,10 +14,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbontext>(options =>
 {
-    options.UseMySql(builder.Configuration.GetConnectionString("MysqlDbConnectionString"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MysqlDbConnectionString")));
+options.UseMySql(builder.Configuration.GetConnectionString("MysqlDbConnectionString"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MysqlDbConnectionString")));
 });
 
 builder.Services.AddScoped<RegionController>();
+builder.Services.AddScoped<IRegionRepository, RegionService>();
+
 
 var app = builder.Build();
 
